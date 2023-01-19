@@ -31,3 +31,6 @@ if (!module.parent) {
   console.log('Listening on', app.get('port'));
 }
 
+/*
+app.js will be the entrypoint for your Node.js web server code and utilizes
+*/

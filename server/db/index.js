@@ -9,4 +9,7 @@ var mysql = require('mysql2');
 // OR
 // user: 'root', password: 'some_password_you_created_at_install'
 
+/*
 
+server/db/index.js uses the mysql npm module to connect to the database server running on your computer
+*/
