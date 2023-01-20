@@ -27,6 +27,8 @@ describe('Persistent Node Chat Server', () => {
     /* Empty the db table before all tests so that multiple tests
      * (or repeated runs of the tests)  will not fail when they should be passing
      * or vice versa */
+
+
     dbConnection.query(`truncate ${tablename}`, done);
   }, 6500);
 
@@ -71,21 +73,37 @@ describe('Persistent Node Chat Server', () => {
 
   it('Should output all messages from the DB', (done) => {
     // Let's insert a message into the db
-    const queryString = '';
-    const queryArgs = [];
+
+    // using placeholders, we can adjust to making this work.
+    const queryString = 'INSERT INTO messages (text, roomname) VALUES (?, ?)';
+
+
+    //'INSERT INTO messages (message) VALUES (\'nick mannnn\')';  <- working solution if you remove query args variable and argument
+
+
+    const queryArgs = ['good morning nickkkkk', 'library'];
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */
-    dbConnection.query(queryString, queryArgs, (err) => {
+    dbConnection.query(queryString, queryArgs, (err, data) => {
       if (err) {
+        console.log('hi am i invoked');
         throw err;
       }
 
+
       // Now query the Node chat server and see if it returns the message we just inserted:
+
       axios.get(`${API_URL}/messages`)
         .then((response) => {
+
           const messageLog = response.data;
-          expect(messageLog[0].text).toEqual(message);
-          expect(messageLog[0].roomname).toEqual(roomname);
+          console.log(messageLog[0]);
+
+
+          expect(messageLog[0].text).toEqual(queryArgs[0]);
+          // console.log('MESSAGE', message);
+          expect(messageLog[0].roomname).toEqual(queryArgs[1]);
+          // console.log('ROOMNAME', roomname);
           done();
         })
         .catch((err) => {
