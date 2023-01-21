@@ -27,14 +27,19 @@ var App = {
   fetch: function(callback = ()=>{}) {
     //parse.readall uses get which gets data from the server
     Parse.readAll((data) => {
-      if (App.stopper === data[0].message_id) {
+      console.log('data', data); // = []
 
+      if (data.length === 0) {
+        App.stopSpinner();
+        return;
+      } else if (App.stopper === data[data.length - 1].id) {
+        return;
       } else {
         //This condition is saying that it will only perform these functions only when a new message occurs
         // TODO: Use the data to update Messages and Rooms
         // and re-render the corresponding views.
         App.startSpinner();
-        App.stopper = data[0].message_id; // 0 because new data message is always at 0 index
+        App.stopper = data[data.length - 1].id; // 0 because new data message is always at 0 index
 
         Rooms.update(data);
         Messages.update(data);

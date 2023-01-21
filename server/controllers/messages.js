@@ -13,7 +13,7 @@ module.exports = {
       } else {
         // res.send(data); // trying to see format of data
         // console.log('data: ', JSON.stringify(data));
-        console.log(data); // this is an
+        console.log('xxxxx', typeof data); // this is an
         res.json(data); // why not res.send() or res.end()
         // https://medium.com/gist-for-js/use-of-res-json-vs-res-send-vs-res-end-in-express-b50688c0cddf
       }
@@ -25,5 +25,15 @@ module.exports = {
 
 
   }, // a function which handles a get request for all messages
-  post: function (req, res) {} // a function which handles posting a message to the database
+  post: function (req, res) {
+
+
+    models.messages.create((err, data) => {
+      if (err) {
+        throw err;
+      } else {
+        res.send(data);
+      }
+    }, req.body);
+  } // a function which handles posting a message to the database
 };

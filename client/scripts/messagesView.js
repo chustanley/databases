@@ -24,9 +24,9 @@ var MessagesView = {
       if (message.roomname === Rooms.selectedRoom) {
         return message;
       }
-    });
+    }); //object with messages array
 
-    for (var i = 0; i < filteredArray.length; i++) {
+    for (var i = 0; i < filteredArray.length; i++) { // this is present!!
       MessagesView.renderMessage(filteredArray[i]);
     }
 
@@ -36,8 +36,10 @@ var MessagesView = {
   renderMessage: function(message) {
     // TODO: Render a single message.
     var newMessage;
-
+    console.log('heloo', Friends._data);
     for (var i = 0; i < Friends._data.length; i++) {
+
+
       if (Friends._data[i] === message.username) {
         newMessage = MessageView.renderFriend(message);
         MessagesView.$chats.append(newMessage);

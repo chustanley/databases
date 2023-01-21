@@ -22,6 +22,7 @@ app.use(express.json());
 
 // Set up our routes
 app.use('/classes', router); //This allows you to use the routes
+// classes is like a branch of tree
 
 // Serve the client files
 app.use(express.static(__dirname + '/../client'));

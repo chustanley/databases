@@ -8,6 +8,7 @@ USE chat;
 
 CREATE TABLE messages (
   `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(100),
   `text` VARCHAR(100),
   `roomname` VARCHAR(100),
   PRIMARY KEY (`id`)

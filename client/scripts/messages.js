@@ -21,6 +21,8 @@ var Messages = {
 
     MessagesView.render is then called and will only display messages on the DOM from the SPECIFIC SELECTED ROOM!
     */
+
+
     MessagesView.render();
   },
 

@@ -38,15 +38,23 @@ describe('Persistent Node Chat Server', () => {
 
   it('Should insert posted messages to the DB', (done) => {
     const username = 'Valjean';
-    const message = 'In mercy\'s name, three days is all I need.';
+    const text = 'In mercy\'s name, three days is all I need.';
     const roomname = 'Hello';
     // Create a user on the chat server database.
-    axios.post(`${API_URL}/users`, { username })
+    axios.post(`${API_URL}/users`, {'username': username})
       .then(() => {
         // Post a message to the node chat server:
-        return axios.post(`${API_URL}/messages`, { username, message, roomname });
+        return axios.post(`${API_URL}/messages`, {'username': username, 'text': text, 'roomname': roomname});
       })
-      .then(() => {
+      .then((data) => {
+
+        console.log(typeof data.config.data);
+        console.log('DATA', data.config.data);
+
+
+        var parsedData = JSON.parse(data.config.data);
+        // console.log('WE HERE BABY', typeof JSON.parse(data.config.data));
+
         // Now if we look in the database, we should find the posted message there.
 
         /* TODO: You might have to change this test to get all the data from
@@ -55,6 +63,7 @@ describe('Persistent Node Chat Server', () => {
         const queryArgs = [];
 
         dbConnection.query(queryString, queryArgs, (err, results) => {
+
           if (err) {
             throw err;
           }
@@ -62,7 +71,7 @@ describe('Persistent Node Chat Server', () => {
           expect(results.length).toEqual(1);
 
           // TODO: If you don't have a column named text, change this test.
-          expect(results[0].text).toEqual(message);
+          expect(results[0].text).toEqual(parsedData.text);
           done();
         });
       })
@@ -75,13 +84,13 @@ describe('Persistent Node Chat Server', () => {
     // Let's insert a message into the db
 
     // using placeholders, we can adjust to making this work.
-    const queryString = 'INSERT INTO messages (text, roomname) VALUES (?, ?)';
+    const queryString = 'INSERT INTO messages (text, roomname, username) VALUES (?, ?, ?)';
 
 
     //'INSERT INTO messages (message) VALUES (\'nick mannnn\')';  <- working solution if you remove query args variable and argument
 
 
-    const queryArgs = ['good morning nickkkkk', 'library'];
+    const queryArgs = ['good morning nickkkkk', 'library', 'dinosaur'];
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */
     dbConnection.query(queryString, queryArgs, (err, data) => {
@@ -97,13 +106,18 @@ describe('Persistent Node Chat Server', () => {
         .then((response) => {
 
           const messageLog = response.data;
-          console.log(messageLog[0]);
+          console.log(messageLog);
+          console.log(messageLog.length);
 
 
-          expect(messageLog[0].text).toEqual(queryArgs[0]);
+          expect(messageLog[1].text).toEqual(queryArgs[0]);
           // console.log('MESSAGE', message);
-          expect(messageLog[0].roomname).toEqual(queryArgs[1]);
+          expect(messageLog[1].roomname).toEqual(queryArgs[1]);
           // console.log('ROOMNAME', roomname);
+          expect(messageLog.length).toEqual(2); // this test has only added 2 messages so far. This checks that the 2nd message sucessfully added
+          expect(messageLog[0].id).toEqual(1);
+          expect(messageLog[1].id).toEqual(2); // checking if the auto increment is working.
+
           done();
         })
         .catch((err) => {
