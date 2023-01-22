@@ -39,18 +39,15 @@ describe('Persistent Node Chat Server', () => {
   it('Should insert posted messages to the DB', (done) => {
     const username = 'Valjean';
     const text = 'In mercy\'s name, three days is all I need.';
-    const roomname = 'Hello';
+    const roomname = 'Lobby';
     // Create a user on the chat server database.
     axios.post(`${API_URL}/users`, {'username': username})
       .then(() => {
         // Post a message to the node chat server:
+        console.log('ARE WE OKAY!!!!');
         return axios.post(`${API_URL}/messages`, {'username': username, 'text': text, 'roomname': roomname});
       })
       .then((data) => {
-
-        console.log(typeof data.config.data);
-        console.log('DATA', data.config.data);
-
 
         var parsedData = JSON.parse(data.config.data);
         // console.log('WE HERE BABY', typeof JSON.parse(data.config.data));
@@ -90,7 +87,7 @@ describe('Persistent Node Chat Server', () => {
     //'INSERT INTO messages (message) VALUES (\'nick mannnn\')';  <- working solution if you remove query args variable and argument
 
 
-    const queryArgs = ['good morning nickkkkk', 'library', 'dinosaur'];
+    const queryArgs = ['good morning nickkkkk', 'Lobby', 'dinosaur'];
     /* TODO: The exact query string and query args to use here
      * depend on the schema you design, so I'll leave them up to you. */
     dbConnection.query(queryString, queryArgs, (err, data) => {
@@ -125,4 +122,78 @@ describe('Persistent Node Chat Server', () => {
         });
     });
   });
+
+  it('All stored messages in the database should be auto-incremented', (done) => {
+
+    const queryString = 'INSERT INTO messages (text, roomname, username) VALUES (?, ?, ?)';
+    const queryArgs = ['Is this auto-incrementing', 'Lobby', 'TEST SUITE'];
+
+    dbConnection.query(queryString, queryArgs, (err, data) => {
+      if (err) {
+        throw err;
+      }
+
+      axios.get(`${API_URL}/messages`)
+        .then((response) => {
+          const messageLog = response.data;
+          expect(messageLog.length).toEqual(3);
+          expect(messageLog[0].id).toEqual(1);
+          expect(messageLog[1].id).toEqual(2);
+          expect(messageLog[2].id).toEqual(3);
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+  });
+
+  it('All stored messages in the database should be auto-incremnted', (done) => {
+
+    const queryString = 'INSERT INTO messages (text, roomname, username) VALUES (?, ?, ?)';
+    const queryArgs = ['Is this auto-incrementing', 'Lobby', 'TEST SUITE'];
+
+    dbConnection.query(queryString, queryArgs, (err, data) => {
+      if (err) {
+        throw err;
+      }
+
+      axios.get(`${API_URL}/messages`)
+        .then((response) => {
+          const messageLog = response.data;
+          expect(messageLog[0].id).toEqual(1);
+          expect(messageLog[1].id).toEqual(2);
+          expect(messageLog[2].id).toEqual(3);
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+  });
+
+  it('Should add into user into the database', (done) => {
+
+    const queryString = 'INSERT INTO users (username) VALUES (?)';
+    const queryArgs = ['Mr.amIinTheDatabase'];
+
+    dbConnection.query(queryString, queryArgs, (err, data) => {
+      if (err) {
+        throw err;
+      }
+
+      axios.get(`${API_URL}/users`)
+        .then((response) => {
+          const messageLog = response.data;
+          console.log(messageLog[messageLog.length - 1].id);
+          expect(messageLog.length).toBeGreaterThan(1);
+          done();
+        })
+        .catch((err) => {
+          throw err;
+        });
+    });
+  });
+
+
 });
