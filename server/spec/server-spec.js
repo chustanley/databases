@@ -174,6 +174,7 @@ describe('Persistent Node Chat Server', () => {
 
   it('Should add into user into the database', (done) => {
     //commit comment
+    //commit comment
     const queryString = 'INSERT INTO users (username) VALUES (?)';
     const queryArgs = ['Mr.amIinTheDatabase'];
 
